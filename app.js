@@ -3,6 +3,7 @@ const path = require("path");
 const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
 const catchAsync = require("./Utilities/catchAsync");
+const ExpressError = require("./Utilities/ExpressError");
 const methodOverride = require("method-override");
 const Campground = require("./models/campground");
 // const campground = require("./models/campground");
@@ -44,21 +45,28 @@ app.get("/campgrounds/new", (req, res) => {
 app.post(
   "/campgrounds",
   catchAsync(async (req, res, next) => {
+    if (!req.body.campground) throw new ExpressError("Invalid Data", 400);
     const campground = new Campground(req.body.campground);
     await campground.save();
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );
 
-app.get("/campgrounds/:id", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/show", { campground });
-});
+app.get(
+  "/campgrounds/:id",
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/show", { campground });
+  })
+);
 
-app.get("/campgrounds/:id/edit", async (req, res) => {
-  const campground = await Campground.findById(req.params.id);
-  res.render("campgrounds/edit", { campground });
-});
+app.get(
+  "/campgrounds/:id/edit",
+  catchAsync(async (req, res) => {
+    const campground = await Campground.findById(req.params.id);
+    res.render("campgrounds/edit", { campground });
+  })
+);
 
 app.put(
   "/campgrounds/:id",
@@ -80,8 +88,14 @@ app.delete(
   })
 );
 
+app.all("*", (req, res, next) => {
+  next(new ExpressError("Page not found", 404));
+});
+
 app.use((err, req, res, next) => {
-  res.send("Something Went Wrong");
+  const { statusCode = 500 } = err;
+  if (!err.message) err.message = "Something went wrong";
+  res.status(statusCode).render("Error/error", { err });
 });
 
 app.listen("3000", () => {
