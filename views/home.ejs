@@ -1,7 +1,20 @@
 <% layout('layouts/boilerplate') %>
 
-    <H1>Yelp Camp</H1>
+    <style>
+        body {
+            height: 100vh;
+        }
 
-    <a href="/campgrounds" class="btn btn-primary btn-mid">All Campground</a>
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <div class="container">
+        <H1>Yelp Camp</H1>
 
-    <a href="/campgrounds/new" class="btn btn-primary btn-mid">Add Campground</a>
+        <a href="/campgrounds" class="btn btn-primary btn-mid">All Campground</a>
+
+        <a href="/campgrounds/new" class="btn btn-primary btn-mid">Add Campground</a>
+    </div>
