@@ -3,6 +3,7 @@ const router = express.Router({ mergeParams: true });
 const ExpressError = require("../Utilities/ExpressError");
 const catchAsync = require("../Utilities/catchAsync");
 const Review = require("../models/review");
+const Campground = require("../models/campground");
 const { reviewSchema } = require("../schemas");
 
 const validateReview = (req, res, next) => {
